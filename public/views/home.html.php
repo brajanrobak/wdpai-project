@@ -1,14 +1,7 @@
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
-</head>
-<body>
+<?php require __DIR__ . '/partials/header.html.php'; ?>
     <main>
-        <h1>Strona główna</h1>
-        <a href="/projects">Zobacz projekty</a>
+        <h1>FoodSaver</h1>
+        <p>Keep track of what you have at home and eat it before it expires.</p>
+        <p><a href="/pantry">Open my pantry</a></p>
     </main>
-</body>
-</html>
+<?php require __DIR__ . '/partials/footer.html.php'; ?>
