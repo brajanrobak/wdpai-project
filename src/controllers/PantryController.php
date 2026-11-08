@@ -42,11 +42,65 @@ final class PantryController extends AppController
 
     public function create(): void
     {
-        $this->render('add-product', [
-            'pageTitle' => 'FoodSaver - Add product',
-            'categories' => ['Dairy', 'Vegetables', 'Meat', 'Bakery', 'Other'],
-            'locations' => ['Fridge', 'Freezer', 'Pantry'],
-        ]);
+        $categories = ['Fruit', 'Dairy', 'Vegetables', 'Meat', 'Bakery', 'Other'];
+        $locations = ['Fridge', 'Freezer', 'Pantry'];
+
+        if (!$this->isPost()) {
+            $this->render('add-product', [
+                'pageTitle' => 'FoodSaver - Add product',
+                'categories' => $categories,
+                'locations' => $locations,
+            ]);
+            return;
+        }
+
+        $name = trim((string) ($_POST['name'] ?? ''));
+        $expiration = trim((string) ($_POST['expiration'] ?? ''));
+        $category = (string) ($_POST['category'] ?? '');
+        $location = (string) ($_POST['location'] ?? '');
+        $quantity = filter_var($_POST['quantity'] ?? null, FILTER_VALIDATE_INT);
+
+        $errors = [];
+
+        if ($name === '' || mb_strlen($name) > 120) {
+            $errors[] = 'Product name is required (max 120 characters).';
+        }
+
+        if ($expiration === '' || \DateTimeImmutable::createFromFormat('Y-m-d', $expiration) === false) {
+            $errors[] = 'Please provide a valid expiration date.';
+        }
+
+        if (!in_array($category, $categories, true)) {
+            $errors[] = 'Please select a valid category.';
+        }
+
+        if (!in_array($location, $locations, true)) {
+            $errors[] = 'Please select a valid storage location.';
+        }
+
+        if ($quantity === false || $quantity < 1) {
+            $errors[] = 'Quantity must be a whole number greater than or equal to 1.';
+        }
+
+        if ($errors !== []) {
+            http_response_code(422);
+            $this->render('add-product', [
+                'pageTitle' => 'FoodSaver - Add product',
+                'categories' => $categories,
+                'locations' => $locations,
+                'errors' => $errors,
+                'form' => [
+                    'name' => $name,
+                    'expiration' => $expiration,
+                    'category' => $category,
+                    'location' => $location,
+                    'quantity' => (string) ($_POST['quantity'] ?? '1'),
+                ],
+            ]);
+            return;
+        }
+
+        $this->redirect('/pantry');
     }
 
     public function history(): void
