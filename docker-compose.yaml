@@ -11,7 +11,7 @@ services:
       - php
     networks:
       - pg-network
-  
+
   db:
     build:
       context: .
@@ -19,15 +19,15 @@ services:
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-db}
+      POSTGRES_USER: ${POSTGRES_USER:-docker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-docker}
     networks:
       - pg-network
     volumes:
       - ./docker/db:/docker-entrypoint-initdb.d
       - pg-data:/var/lib/postgresql/data
-  
+
   php:
     build:
       context: .
@@ -36,7 +36,7 @@ services:
       - .:/app
     networks:
       - pg-network
-  
+
   ollama:
     image: ollama/ollama:latest
     gpus: all
@@ -58,13 +58,13 @@ services:
     image: dpage/pgadmin4:latest
     container_name: ${PGADMIN_CONTAINER_NAME:-pg-admin}
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
       - pg-network
-  
+
 networks:
   pg-network:
 
